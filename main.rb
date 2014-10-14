@@ -72,6 +72,10 @@ class Region
 		@projects.inject(0){|sum,x| sum + x.length}
 	end
 
+	def project_length
+		@projects.length
+	end
+
 	def to_s
 		"#{@name},#{@projects}\n"
 	end
@@ -82,6 +86,23 @@ class  District
 
 	def area
 		input.area + output.area
+	end
+
+	def input_land_length
+		@input.length
+	end
+
+	def input_project_length
+		@input.project_length
+	end
+
+
+	def output_land_length
+		@output.length
+	end
+
+	def output_project_length
+		@output.project_length
 	end
 
 end
@@ -116,7 +137,6 @@ end
 # 	xzq_z = i[9]
 # 	xzq_x = i[10]
 # 	area = i[11].to_f
-
 # 	unit = Unit.new(one,two,area)
 # end
 
@@ -184,11 +204,11 @@ def district_select(data,name)
 	outputdata = wujingdata.select{|e| e[4] == "O"}
 
 	conditional = Region.new
-	conditional.name = "有条件建设区"
+	conditional.name = "调整的有条件建设区"
 	conditional.projects = unit2project(inputdata)
 
 	constructable = Region.new
-	constructable.name = "允许建设区"
+	constructable.name = "调整的允许建设区"
 	constructable.projects = unit2project(outputdata)
 
 	wujin = District.new

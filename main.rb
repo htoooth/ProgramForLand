@@ -2,6 +2,7 @@
 
 require "erb"
 require 'csv'
+require_relative "head"
 
 class Unit
 	attr_accessor :one,:two,:area
@@ -20,22 +21,22 @@ class Land
 
 	def area_gengdi
 		gd = @units.select { |e| e.two == "耕地" }
-		gd.inject(0){|sum,x| sum + x.area}
+		area = gd.inject(0){|sum,x| sum + x.area}
 	end
 
 	def area_nongyongdi
 		gd = @units.select { |e| e.one == "农用地" }
-		gd.inject(0){|sum,x| sum + x.area}
+		area =  gd.inject(0){|sum,x| sum + x.area}
 	end
 
 	def area_weiliyongdi
 		gd = @units.select { |e| e.one == "未利用地" }
-		gd.inject(0){|sum,x| sum + x.area}
+		area = gd.inject(0){|sum,x| sum + x.area}
 	end
 
 	def area_jiansheyongdi
 		gd = @units.select { |e| e.one == "建设用地" }
-		gd.inject(0){|sum,x| sum + x.area}
+		area = gd.inject(0){|sum,x| sum + x.area}
 	end
 
 	def to_s
@@ -59,6 +60,14 @@ class Project
 	def to_s
 		"#{@name},#{@local[0][0]},#{@lands}\n"
 	end
+
+	def area_nongyongdi
+		@lands.inject(0){|sum,x| sum + x.area_nongyongdi}
+	end
+
+	def area_gengdi
+		@lands.inject(0){|sum,x| sum + x.area_gengdi}
+	end
 end
 
 class Region
@@ -79,6 +88,18 @@ class Region
 	def to_s
 		"#{@name},#{@projects}\n"
 	end
+
+	def get_all_out_land
+		lands = []
+		@projects.each do |p|
+			lands.concat(p.lands)
+		end
+
+		l = lands.sort { |a, b| a.num <=> b.num }
+
+		l.each { |e| yield(e) }
+	end
+
 end
 
 class  District
@@ -96,6 +117,9 @@ class  District
 		@input.project_length
 	end
 
+	def input_area
+		sprintf("%0.4f",@input.area)
+	end
 
 	def output_land_length
 		@output.length
@@ -103,6 +127,10 @@ class  District
 
 	def output_project_length
 		@output.project_length
+	end
+
+	def output_area
+		sprintf("%0.4f",@output.area)
 	end
 
 end
@@ -115,7 +143,8 @@ class Downtown
 	end
 
 	def all_input_area
-		@xinbei.input.area + @wujing.input.area
+		area = @xinbei.input.area + @wujing.input.area
+		sprintf("%0.4f",area)
 	end
 
 	def all_output_count
@@ -123,7 +152,8 @@ class Downtown
 	end
 
 	def all_output_area
-		@xinbei.output.area + @wujing.output.area
+		area = @xinbei.output.area + @wujing.output.area
+		sprintf("%0.4f",area)
 	end
 end
 
@@ -158,7 +188,7 @@ def unit2project(input)
 		# puts name,units.length
 		project = Project.new
 		project.name = name
-		project.local = units.uniq{|q| q[9]}
+		project.local = units.uniq{|q| q[9]}[0][9]
 		project.lands = []
 
 	    lands = {}
@@ -177,7 +207,7 @@ def unit2project(input)
 		lands.each do |key,units|
 			land = Land.new
 			land.num = key
-			land.local = units.uniq{|q| q[10]}
+			land.local = units.uniq{|q| q[10]}[0][10]
 			land.units = []
 
 			units.each do |e|
@@ -228,7 +258,22 @@ downtown = Downtown.new
 downtown.wujing = wujin
 downtown.xinbei = xinbei
 
-puts downtown.all_input_count
-puts downtown.all_input_area
-puts downtown.all_output_count
-puts downtown.all_output_area
+# puts downtown.all_input_count
+# puts downtown.all_input_area
+# puts downtown.all_output_count
+# puts downtown.all_output_area
+
+# head = ERB.new Head::Template,0,1
+# wujin = ERB.new Head::Template1,0,1
+
+# puts wujin.result(binding)
+
+# downtown.wujing = xinbei
+
+# puts wujin.result(binding)
+
+
+head = ERB.new Head::Template2,0,1
+wujin = ERB.new Head::Template3,0,1
+
+puts wujin.result(binding)

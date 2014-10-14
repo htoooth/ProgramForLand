@@ -21,6 +21,6 @@ Template2 = %q{
 }
 
 Template3 = %q{
-<%= downtown.wujing.name %><%= downtown.wujing.output.name %>地块具体信息：<% downtown.wujing.output.get_all_out_land do |l| %><%=l.num %>号地块，位于<%= l.local %>，拟调整面积<%= sprintf("%0.4f",l.area) %>公顷，其中占用农用地<%= sprintf("%0.4f",l.area_nongyongdi) %>公顷、耕地<%= sprintf("%0.4f",l.area_gengdi) %>公顷，调整前用途为建设用地。<% end %>
+<%= downtown.wujing.name %><%= downtown.wujing.output.name %>地块具体信息：<% downtown.wujing.output.get_all_out_land do |l| %><%=l.num %>号地块，位于<%= l.local %>，拟调整面积<%= sprintf("%0.4f",l.area) %>公顷，其中占用农用地<%= sprintf("%0.4f",l.area_nongyongdi) %>公顷、耕地<%= sprintf("%0.4f",l.area_gengdi) %>公顷，未利用地<%= sprintf("%0.4f",l.area_weiliyongdi) %>公顷，调整前用途为建设用地。<% end %>
 }
 end

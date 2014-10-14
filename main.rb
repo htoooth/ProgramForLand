@@ -222,6 +222,7 @@ def unit2project(input)
 			project.lands << land
 		end
 
+		project.lands.sort!{|a,b| a.num <=> b.num}
 		projects << project
 	end
 
@@ -263,17 +264,22 @@ downtown.xinbei = xinbei
 # puts downtown.all_output_count
 # puts downtown.all_output_area
 
-# head = ERB.new Head::Template,0,1
-# wujin = ERB.new Head::Template1,0,1
+youtiaojian = ERB.new Head::Template,0,1
+yunxu = ERB.new Head::Template2,0,1
 
-# puts wujin.result(binding)
+# head
+puts youtiaojian.result(binding)
+puts yunxu.result(binding)
 
-# downtown.wujing = xinbei
+youtiaojian_item = ERB.new Head::Template1,0,1
+yunxu_item = ERB.new Head::Template3,0,1
 
-# puts wujin.result(binding)
+## wujing
+puts youtiaojian_item.result(binding)
+puts yunxu_item.result(binding)
 
 
-head = ERB.new Head::Template2,0,1
-wujin = ERB.new Head::Template3,0,1
-
-puts wujin.result(binding)
+## xinbei
+downtown.wujing = xinbei
+puts youtiaojian_item.result(binding)
+puts yunxu_item.result(binding)

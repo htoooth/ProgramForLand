@@ -39,7 +39,9 @@ class Land
 	end
 
 	def to_s
-		"#{@num},#{@local[0]},#{@units}\n"
+		str = ""
+		str = "#{@num},#{@local[0]},"
+		units.each { |e| str += e.to_f + "\n" }
 	end
 end
 
@@ -123,64 +125,69 @@ keys = lines.delete lines.first
 # end
 
 wujing = lines.select { |e| e[8] == "武进区" }
-puts wujing.length
-input = wujing.select{|e| e[4] == "I"}
-puts input.length
-output = wujing.select{|e| e[4] == "O"}
+inputdata = wujing.select{|e| e[4] == "I"}
+outputdata = wujing.select{|e| e[4] == "O"}
 
-inputPrjects = {}
-input.each do |e| 
-	name = e[2]==""? e[3]:e[2]
-	if inputPrjects.has_key?(name)
-		inputPrjects[name] << e
-	else
-		inputPrjects[name] = []
+def unit2project(input)
+	inputPrjects = {}
+
+	input.each do |e| 
+		name = e[2]==""? e[3]:e[2]
+		if inputPrjects.has_key?(name)
+			inputPrjects[name] << e
+		else
+			inputPrjects[name] = [e]
+		end
 	end
+
+
+	projects = []
+
+	inputPrjects.each do |name,units|
+		# puts name,units.length
+		project = Project.new
+		project.name = name
+		project.local = units.uniq{|q| q[9]}
+		project.lands = []
+
+	    lands = {}	
+		units.each do |e|  
+			if lands.has_key?(e[3])
+				lands[e[3]] << e
+			else
+				lands[e[3]] = [e]
+			end
+		end
+
+		# if lands.has_key?("005")
+		# 	puts lands["005"]
+		# end
+
+		lands.each do |key,units|
+			land = Land.new
+			land.num = key
+			land.local = units.uniq{|q| q[10]}
+			land.units = []
+
+			units.each do |e|  
+				u = Unit.new
+				u.one = e[6]
+				u.two = e[7]
+				u.area = e[11].to_f
+
+				land.units << u
+			end
+
+			project.lands << land
+		end
+
+		projects << project
+	end	
+
+	return projects
 end
 
 conditional = Region.new
 conditional.name = "有条件调为允许"
-conditional.projects = []
-
-inputPrjects.each do |name,units|
-	project = Project.new
-	project.name = name
-	project.local = units.uniq{|q| q[9]}
-	project.lands = []
-
-    lands = {}	
-	units.each do |e|  
-		if lands.has_key?(e[3])
-			lands[e[3]] << e
-		else
-			lands[e[3]] = []
-		end
-	end
-
-	lands.each do |key,units|
-		land = Land.new
-		land.num = key
-		land.local = units.uniq{|q| q[10]}
-		land.units = []
-
-		units.each do |e|  
-			u = Unit.new
-			u.one = e[6]
-			u.two = e[7]
-			u.area = e[11].to_f
-
-			land.units << u
-		end
-
-		project.lands << land
-	end
-
-	conditional.projects << project
-end
-
-puts conditional.projects[0]
-
-
-
-# wujing:name
-         
+conditional.projects = unit2project(inputdata)
+puts conditional.area

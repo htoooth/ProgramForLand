@@ -226,7 +226,7 @@ def unit2project(input)
 		projects << project
 	end
 
-	return projects
+	return projects.sort { |a, b| a.name <=> b.name }
 end
 
 def district_select(data,name)

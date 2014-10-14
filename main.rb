@@ -69,7 +69,7 @@ class Region
 	end
 
 	def length
-		@projects.length
+		@projects.inject(0){|sum,x| sum + x.length}
 	end
 
 	def to_s
@@ -106,10 +106,6 @@ class Downtown
 	end
 end
 
-
-lines = CSV.open(ARGV[0],"r:utf-8").readlines
-keys = lines.delete lines.first
-
 # lines.each do |i|
 # 	bz = i[2]
 # 	dkxh = i[3]
@@ -124,14 +120,10 @@ keys = lines.delete lines.first
 # 	unit = Unit.new(one,two,area)
 # end
 
-wujing = lines.select { |e| e[8] == "武进区" }
-inputdata = wujing.select{|e| e[4] == "I"}
-outputdata = wujing.select{|e| e[4] == "O"}
-
 def unit2project(input)
 	inputPrjects = {}
 
-	input.each do |e| 
+	input.each do |e|
 		name = e[2]==""? e[3]:e[2]
 		if inputPrjects.has_key?(name)
 			inputPrjects[name] << e
@@ -139,7 +131,6 @@ def unit2project(input)
 			inputPrjects[name] = [e]
 		end
 	end
-
 
 	projects = []
 
@@ -150,8 +141,8 @@ def unit2project(input)
 		project.local = units.uniq{|q| q[9]}
 		project.lands = []
 
-	    lands = {}	
-		units.each do |e|  
+	    lands = {}
+		units.each do |e|
 			if lands.has_key?(e[3])
 				lands[e[3]] << e
 			else
@@ -169,7 +160,7 @@ def unit2project(input)
 			land.local = units.uniq{|q| q[10]}
 			land.units = []
 
-			units.each do |e|  
+			units.each do |e|
 				u = Unit.new
 				u.one = e[6]
 				u.two = e[7]
@@ -182,12 +173,42 @@ def unit2project(input)
 		end
 
 		projects << project
-	end	
+	end
 
 	return projects
 end
 
-conditional = Region.new
-conditional.name = "有条件调为允许"
-conditional.projects = unit2project(inputdata)
-puts conditional.area
+def district_select(data,name)
+	wujingdata = data.select { |e| e[8] == name }
+	inputdata = wujingdata.select{|e| e[4] == "I"}
+	outputdata = wujingdata.select{|e| e[4] == "O"}
+
+	conditional = Region.new
+	conditional.name = "有条件建设区"
+	conditional.projects = unit2project(inputdata)
+
+	constructable = Region.new
+	constructable.name = "允许建设区"
+	constructable.projects = unit2project(outputdata)
+
+	wujin = District.new
+	wujin.name = name
+	wujin.input = conditional
+	wujin.output = constructable
+
+	return wujin
+end
+
+lines = CSV.open(ARGV[0],"r:utf-8").readlines
+keys = lines.delete lines.first
+wujin = district_select(lines,"武进区")
+xinbei = district_select(lines,"新北区")
+
+downtown = Downtown.new
+downtown.wujing = wujin
+downtown.xinbei = xinbei
+
+puts downtown.all_input_count
+puts downtown.all_input_area
+puts downtown.all_output_count
+puts downtown.all_output_area

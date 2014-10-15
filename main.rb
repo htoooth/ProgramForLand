@@ -274,19 +274,27 @@ downtown.xinbei = xinbei
 ########################################
 
 CSV.open("wujing1.csv", "w") do |csv|  
-
+	downtown.wujing.input.get_all_out_land do |l|
+		csv << [l.num,"武进区",l.area,l.area_gengdi,l.type,"建设用地","民生工程"]
+	end
 end
 
 CSV.open("wujing2.csv", "w") do |csv|  
-
+	downtown.wujing.output.get_all_out_land do |l|
+		csv << [l.num,"武进区",l.area,l.area_gengdi,"建设用地","农用地"]
+	end
 end
 
 CSV.open("xinbei1.csv", "w") do |csv|  
-
+	downtown.xinbei.input.get_all_out_land do |l|
+		csv << [l.num,"新北区",l.area,l.area_gengdi,l.type,"建设用地","民生工程"]
+	end
 end
 
 CSV.open("xinbei2.csv", "w") do |csv|  
-
+	downtown.xinbei.output.get_all_out_land do |l|
+		csv << [l.num,"新北区",l.area,l.area_gengdi,"建设用地","农用地"]
+	end
 end
 
 ########################################

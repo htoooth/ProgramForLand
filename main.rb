@@ -15,6 +15,10 @@ end
 class Land
 	attr_accessor :num,:local,:units
 
+	def get_type
+		units.uniq{|q| q[6]}[0][6]
+	end
+
 	def area
 		@units.inject(0){|sum,x| sum + x.area}
 	end
@@ -259,31 +263,48 @@ downtown = Downtown.new
 downtown.wujing = wujin
 downtown.xinbei = xinbei
 
-puts downtown.all_input_count
-puts downtown.all_input_area
-puts downtown.all_output_count
-puts downtown.all_output_area
-puts downtown.xinbei.input.area
-puts downtown.xinbei.output.area
-puts downtown.wujing.input.area
-puts downtown.wujing.output.area
+# puts downtown.all_input_count
+# puts downtown.all_input_area
+# puts downtown.all_output_count
+# puts downtown.all_output_area
+# puts downtown.xinbei.input.area
+# puts downtown.xinbei.output.area
+# puts downtown.wujing.input.area
+# puts downtown.wujing.output.area
+########################################
 
-# youtiaojian = ERB.new Head::Template,0,1
-# yunxu = ERB.new Head::Template2,0,1
+CSV.open("wujing1.csv", "w") do |csv|  
 
-# # head
-# puts youtiaojian.result(binding)
-# puts yunxu.result(binding)
+end
 
-# youtiaojian_item = ERB.new Head::Template1,0,1
-# yunxu_item = ERB.new Head::Template3,0,1
+CSV.open("wujing2.csv", "w") do |csv|  
 
-# ## wujing
-# puts youtiaojian_item.result(binding)
-# puts yunxu_item.result(binding)
+end
 
+CSV.open("xinbei1.csv", "w") do |csv|  
 
-# ## xinbei
-# downtown.wujing = xinbei
-# puts youtiaojian_item.result(binding)
-# puts yunxu_item.result(binding)
+end
+
+CSV.open("xinbei2.csv", "w") do |csv|  
+
+end
+
+########################################
+youtiaojian = ERB.new Head::Template,0,1
+yunxu = ERB.new Head::Template2,0,1
+
+# head
+puts youtiaojian.result(binding)
+puts yunxu.result(binding)
+
+youtiaojian_item = ERB.new Head::Template1,0,1
+yunxu_item = ERB.new Head::Template3,0,1
+
+## wujing
+puts youtiaojian_item.result(binding)
+puts yunxu_item.result(binding)
+
+## xinbei
+downtown.wujing = xinbei
+puts youtiaojian_item.result(binding)
+puts yunxu_item.result(binding)

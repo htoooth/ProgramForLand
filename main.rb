@@ -259,27 +259,31 @@ downtown = Downtown.new
 downtown.wujing = wujin
 downtown.xinbei = xinbei
 
-# puts downtown.all_input_count
-# puts downtown.all_input_area
-# puts downtown.all_output_count
-# puts downtown.all_output_area
+puts downtown.all_input_count
+puts downtown.all_input_area
+puts downtown.all_output_count
+puts downtown.all_output_area
+puts downtown.xinbei.input.area
+puts downtown.xinbei.output.area
+puts downtown.wujing.input.area
+puts downtown.wujing.output.area
 
-youtiaojian = ERB.new Head::Template,0,1
-yunxu = ERB.new Head::Template2,0,1
+# youtiaojian = ERB.new Head::Template,0,1
+# yunxu = ERB.new Head::Template2,0,1
 
-# head
-puts youtiaojian.result(binding)
-puts yunxu.result(binding)
+# # head
+# puts youtiaojian.result(binding)
+# puts yunxu.result(binding)
 
-youtiaojian_item = ERB.new Head::Template1,0,1
-yunxu_item = ERB.new Head::Template3,0,1
+# youtiaojian_item = ERB.new Head::Template1,0,1
+# yunxu_item = ERB.new Head::Template3,0,1
 
-## wujing
-puts youtiaojian_item.result(binding)
-puts yunxu_item.result(binding)
+# ## wujing
+# puts youtiaojian_item.result(binding)
+# puts yunxu_item.result(binding)
 
 
-## xinbei
-downtown.wujing = xinbei
-puts youtiaojian_item.result(binding)
-puts yunxu_item.result(binding)
+# ## xinbei
+# downtown.wujing = xinbei
+# puts youtiaojian_item.result(binding)
+# puts yunxu_item.result(binding)

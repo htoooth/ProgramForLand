@@ -13,10 +13,10 @@ class Unit
 end
 
 class Land
-	attr_accessor :num,:local,:units
+	attr_accessor :num,:local,:units,:xzq
 
 	def get_type
-		units.uniq{|q| q[6]}[0][6]
+		@units.uniq{|q| q.one }[0].one
 	end
 
 	def area
@@ -104,6 +104,14 @@ class Region
 		l.each { |e| yield(e) }
 	end
 
+	def get_lands
+		lands = []
+		@projects.each do |p|
+			lands.concat(p.lands)
+		end
+		return lands
+	end
+
 end
 
 class  District
@@ -159,6 +167,20 @@ class Downtown
 		area = @xinbei.output.area + @wujing.output.area
 		sprintf("%0.4f",area)
 	end
+
+	def get_all_input_lands
+		lands= []
+		lands.concat(@xinbei.input.get_lands)
+		lands.concat(@wujing.input.get_lands)
+		lands.sort {|a,b| a.num <=> b.num}.each { |e| yield(e) }
+	end
+
+	def get_all_output_lands
+		lands= []
+		lands.concat(@xinbei.output.get_lands)
+		lands.concat(@wujing.output.get_lands)
+		lands.sort {|a,b| a.num <=> b.num}.each { |e| yield(e) }
+	end
 end
 
 # lines.each do |i|
@@ -213,6 +235,7 @@ def unit2project(input)
 			land.num = key
 			land.local = units.uniq{|q| q[10]}[0][10]
 			land.units = []
+			land.xzq = units.uniq{|q| q[8]}[0][8]
 
 			units.each do |e|
 				u = Unit.new
@@ -275,26 +298,48 @@ downtown.xinbei = xinbei
 
 CSV.open("wujing1.csv", "w") do |csv|  
 	downtown.wujing.input.get_all_out_land do |l|
-		csv << [l.num,"武进区",l.area,l.area_gengdi,l.type,"建设用地","民生工程"]
+		csv << [l.num,"武进区",sprintf("%.4f",l.area),sprintf("%.4f",l.area_gengdi),l.get_type,"建设用地","民生工程"]
 	end
 end
 
 CSV.open("wujing2.csv", "w") do |csv|  
 	downtown.wujing.output.get_all_out_land do |l|
-		csv << [l.num,"武进区",l.area,l.area_gengdi,"建设用地","农用地"]
+		csv << [l.num,"武进区",sprintf("%.4f",l.area),sprintf("%.4f",l.area_gengdi),"建设用地","农用地"]
 	end
 end
 
 CSV.open("xinbei1.csv", "w") do |csv|  
 	downtown.xinbei.input.get_all_out_land do |l|
-		csv << [l.num,"新北区",l.area,l.area_gengdi,l.type,"建设用地","民生工程"]
+		csv << [l.num,l.xzq,sprintf("%.4f",l.area),sprintf("%.4f",l.area_gengdi),l.get_type,"建设用地","民生工程"]
 	end
 end
 
 CSV.open("xinbei2.csv", "w") do |csv|  
 	downtown.xinbei.output.get_all_out_land do |l|
-		csv << [l.num,"新北区",l.area,l.area_gengdi,"建设用地","农用地"]
+		csv << [l.num,"新北区",sprintf("%.4f",l.area),sprintf("%.4f",l.area_gengdi),"建设用地","农用地"]
 	end
+end
+
+CSV.open("total.csv", "w") do |csv|  
+	downtown.get_all_input_lands do |l|
+		csv << [l.num,l.xzq,
+			sprintf("%.2f",l.area),
+			sprintf("%.2f",l.area_nongyongdi),
+			sprintf("%.2f",l.area_gengdi),
+			sprintf("%.2f",l.area_jiansheyongdi),
+			sprintf("%.2f",l.area_weiliyongdi),
+			"民生工程"]
+	end
+
+	downtown.get_all_output_lands do |l|
+		csv << [l.num,l.xzq,
+			sprintf("%.2f",l.area),
+			sprintf("%.2f",l.area_nongyongdi),
+			sprintf("%.2f",l.area_gengdi),
+			sprintf("%.2f",l.area_jiansheyongdi),
+			sprintf("%.2f",l.area_weiliyongdi),
+			" "]
+	end	
 end
 
 ########################################
